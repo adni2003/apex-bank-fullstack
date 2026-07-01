@@ -11,26 +11,36 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.demo.apexbankapi.model.Account;
+import com.demo.apexbankapi.repository.AccountRepository;
 import com.demo.apexbankapi.service.BankService;
 
 @RestController
 @RequestMapping("/api/bank")
-@CrossOrigin(origins = "*") // The base URL route for all endpoints in this class
+@CrossOrigin(origins = "*") // Allow local browser access during development
 public class BankController {
 
     @Autowired
     private BankService bankService;
 
     // 1. Endpoint to open a new account
-    // POST http://localhost:8083/api/bank/account
+    // POST http://localhost:8082/api/bank/account
     @PostMapping("/account")
-    public ResponseEntity<Account> openAccount(@RequestBody Account account) {
-        Account createdAccount = bankService.createAccount(account);
-        return ResponseEntity.ok(createdAccount);
+    public ResponseEntity<?> registerAccount(@RequestBody Account newAccount) {
+        // Basic validation
+        if (newAccount.getBalance() < 0) {
+            return ResponseEntity.badRequest().body("Initial deposit cannot be negative.");
+        }
+
+        try {
+            Account saved = bankService.createAccount(newAccount);
+            return ResponseEntity.ok(saved);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
     // 2. Endpoint to check account details
-    // GET http://localhost:8083/api/bank/account/{accountNumber}
+    // GET http://localhost:8082/api/bank/account/{accountNumber}
     @GetMapping("/account/{accountNumber}")
     public ResponseEntity<Account> checkBalance(@PathVariable String accountNumber) {
         Account account = bankService.getAccount(accountNumber);
@@ -38,7 +48,7 @@ public class BankController {
     }
 
     // 3. Endpoint to transfer money between accounts
-    // POST http://localhost:8083/api/bank/transfer
+    // POST http://localhost:8082/api/bank/transfer
     @PostMapping("/transfer")
     public ResponseEntity<String> executeTransfer(
             @RequestParam String from,

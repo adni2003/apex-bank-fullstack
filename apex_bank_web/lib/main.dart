@@ -173,18 +173,22 @@ class _RegisterPageState extends State<RegisterPage> {
 
     if (!mounted) return;
 
+    final isSuccess = result.contains('successfully');
+
     await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(result.success ? 'Registration Completed' : 'Registration Failed'),
-          content: Text(result.message),
+          title: Text(isSuccess ? 'Registration Completed' : 'Registration Failed'),
+          content: Text(result),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                if (result.success) {
-                  Navigator.of(context).pop();
+                if (isSuccess) {
+                  _accountController.clear();
+                  _nameController.clear();
+                  _balanceController.clear();
                 }
               },
               child: const Text('OK'),

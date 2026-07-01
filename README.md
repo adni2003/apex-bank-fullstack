@@ -11,7 +11,7 @@ The application is split into two independent decoupled systems:
 
 ## 🔒 Key Security & Technical Standards Implemented
 * **Atomic Transactions (`@Transactional`)**: Ensures database rollbacks during peer-to-peer fund transfer failures, avoiding any possibility of data loss or balance mismatches.
-* **CORS Restrictions**: Configured Cross-Origin Resource Sharing on REST endpoints to explicitly mitigate unauthorized third-party cross-site request forgery (CSRF) attempts.
+* **CORS Restrictions**: Configured Cross-Origin Resource Sharing on REST endpoints to explicitly mitigate unauthorized third-party cross-site request forgery (CSRF) attempts. During local development, a wildcard origin (*) was utilized to accommodate Flutter Web's dynamic local port allocation. However, the system architecture is designed to enforce explicit domain-targeted CORS policies when moving to a production environment.
 * **Input Constraints**: Handled robust client-side and server-side validation rules to verify financial figures and prevent logical database manipulation (such as negative transfer vectors).
 
 ## 🚀 Core Functionalities
